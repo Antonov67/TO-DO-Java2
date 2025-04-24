@@ -9,4 +9,7 @@ public class ResponseTodo {
     @SerializedName("items")
     private List<Todo> todoList;
 
+    public List<Todo> getTodoList() {
+        return todoList;
+    }
 }
