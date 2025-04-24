@@ -28,16 +28,17 @@ public class UI extends JFrame {
         // Панель кнопок
         JPanel buttonPanel = new JPanel();
 
-        JButton addButton = new JButton("Add Task");
-        // addButton.addActionListener(this::addTask);
+        JButton addButton = new JButton("Add TO-DO");
+        addButton.addActionListener(e -> addTodo());
 
         JButton completeButton = new JButton("Toggle Complete");
         // completeButton.addActionListener(this::toggleComplete);
 
         JButton deleteButton = new JButton("Delete Task");
-        // deleteButton.addActionListener(this::deleteTask);
+        deleteButton.addActionListener(e -> deleteTodo());
 
         JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(e -> loadTodos());
 
         buttonPanel.add(addButton);
         buttonPanel.add(completeButton);
@@ -54,6 +55,36 @@ public class UI extends JFrame {
                 tableModel.setTasks(data.getTodoList());
             }
         });
+    }
+
+    private void addTodo(){
+        String title = JOptionPane.showInputDialog(this, "Напишите задачу");
+        if (!title.trim().isEmpty()){
+            Todo todo = new Todo(title, false);
+            service.createTodo(todo, new SimpleDataCallback<Todo>() {
+                @Override
+                public void load(Todo data) {
+                    if (data != null){
+                        loadTodos();
+                    }
+                }
+            });
+        }
+    }
+
+    private void deleteTodo(){
+        int selectedRow = taskTable.getSelectedRow();
+        if (selectedRow >= 0){
+            Todo todo = tableModel.getTaskAt(selectedRow);
+            service.deleteTodo(todo.getId(), new SimpleDataCallback<String>() {
+                @Override
+                public void load(String data) {
+                    if (data != null){
+                        loadTodos();
+                    }
+                }
+            });
+        }
     }
 
 }
